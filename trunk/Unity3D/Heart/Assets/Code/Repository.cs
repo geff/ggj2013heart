@@ -1,15 +1,15 @@
 using UnityEngine;
 using System.Collections;
 
-public class Character : MonoBehaviour
+public class Repository : MonoBehaviour
 {
-    public float BaseSpeed = 30;
-    public AnimationCurve RunningCurve = AnimationCurve.Linear(-1f, 0f, 1f, 5f);
-    public float JumpingHeight;
+    public int Life = 70;
+    public Difficulty CurrentDifficulty = Difficulty.ImTooYoungToDie_1;
 
     // Use this for initialization
     void Start()
     {
+
     }
 
     // Update is called once per frame
