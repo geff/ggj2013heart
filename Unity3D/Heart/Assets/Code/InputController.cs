@@ -20,14 +20,20 @@ public class InputController : MonoBehaviour
 
             percent = Input.GetAxis("Horizontal");
 
-            Vector3 vecBaseSpeed = new Vector3(0f,0f,Character.BaseSpeed * Time.deltaTime);
-            Vector3 vecRunningCurve = new Vector3(0f,0f,Character.RunningCurve.Evaluate(percent));
+            Vector3 vecBaseSpeed = new Vector3(0f, 0f, Character.BaseSpeed * Time.deltaTime);
+            Vector3 vecRunningCurve = new Vector3(0f, 0f, Character.RunningCurve.Evaluate(percent));
             Vector3 vecJumping = new Vector3(0f, 0f, 0f);
 
-            if(Input.GetButton("Jump"))
+            if (Input.GetButton("Jump"))
                 vecJumping = new Vector3(0f, Character.JumpingHeight, 0f);
 
-            Character.transform.Translate(vecBaseSpeed + vecRunningCurve + vecJumping);
+
+            Debug.Log((vecBaseSpeed + vecRunningCurve + vecJumping).ToString());
+
+            Character.rigidbody.AddForce(vecBaseSpeed + vecRunningCurve + vecJumping);
+
+
+            //Character.transform.Translate(vecBaseSpeed + vecRunningCurve + vecJumping);
         }
     }
 }
