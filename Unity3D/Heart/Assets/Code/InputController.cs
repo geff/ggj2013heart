@@ -30,14 +30,10 @@ public class InputController : MonoBehaviour
                 Debug.Log("Jump");
             }
 
-
             Vector3 vecMoving = vecBaseSpeed + vecRunningCurve + vecJumping;
-            Debug.Log((vecMoving).ToString());
-
-            //Character.rigidbody.velocity = vecMoving;
+            //Debug.Log((vecMoving).ToString());
 
             Character.rigidbody.AddForce(vecMoving);
-            //Character.transform.Translate(vecBaseSpeed + vecRunningCurve + vecJumping);
         }
     }
 }
