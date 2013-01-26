@@ -11,8 +11,6 @@ public class DifficultyLevel : MonoBehaviour
     // Use this for initialization
     void Start()
     {
-        DifficultyDependency = new List<Difficulty>();
-        NiveauMinimalVie = new List<int>();
     }
 
     // Update is called once per frame

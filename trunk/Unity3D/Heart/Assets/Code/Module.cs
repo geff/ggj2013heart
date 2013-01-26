@@ -5,14 +5,12 @@ using System.Collections.Generic;
 public class Module : MonoBehaviour
 {
     public string Nom;
-    public Difficulty Difficulty;
+    public Difficulty Difficulty = Difficulty.ImTooYoungToDie_1;
     public Transform ModulePrefab;
-    public int NiveauVieMinimum = 0;
 
     // Use this for initialization
     void Start()
     {
-        Difficulty = global::Difficulty.ImTooYoungToDie_1;
     }
 
     // Update is called once per frame
