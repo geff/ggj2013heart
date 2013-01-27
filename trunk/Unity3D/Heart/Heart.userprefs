@@ -1,8 +1,10 @@
 ﻿<Properties>
   <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" />
-  <MonoDevelop.Ide.Workbench ActiveDocument="Assets\Standard Assets\Character Controllers\Sources\Scripts\PlatformInputController.js">
+  <MonoDevelop.Ide.Workbench ActiveDocument="Assets\Code\SmoothFollow.cs">
     <Files>
-      <File FileName="Assets\Standard Assets\Character Controllers\Sources\Scripts\PlatformInputController.js" Line="32" Column="3" />
+      <File FileName="Assets\Code\InputController.cs" Line="36" Column="14" />
+      <File FileName="Assets\Code\Trigger.cs" Line="44" Column="5" />
+      <File FileName="Assets\Code\SmoothFollow.cs" Line="17" Column="18" />
     </Files>
   </MonoDevelop.Ide.Workbench>
   <MonoDevelop.Ide.DebuggingService.Breakpoints>
