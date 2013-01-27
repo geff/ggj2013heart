@@ -26,6 +26,9 @@ public class Trigger : MonoBehaviour
             {
                 InputController.Instance.Jump();
             }
+            else if (this.TriggerType == global::TriggerType.Landing)
+            {
+            }
             else if (this.TriggerType == global::TriggerType.ModuleInstanciator)
             {
                 GameObject gameLogic = GameObject.Find("GameLogic");
@@ -125,5 +128,6 @@ public class Trigger : MonoBehaviour
 public enum TriggerType
 {
     Jump,
+    Landing,
     ModuleInstanciator
 }
