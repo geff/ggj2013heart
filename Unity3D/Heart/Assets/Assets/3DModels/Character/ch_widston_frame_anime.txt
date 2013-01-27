@@ -1,0 +1,6 @@
+0-24 : course
+25-65 : marche
+66-90: saut
+91-101 : "en l'air"
+102-116 : atterissage
+117-330 : demarrage du jeu (tuto)
