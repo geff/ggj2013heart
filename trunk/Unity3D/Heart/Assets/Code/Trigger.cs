@@ -28,6 +28,7 @@ public class Trigger : MonoBehaviour
             }
             else if (this.TriggerType == global::TriggerType.Landing)
             {
+                InputController.Instance.Landing();
             }
             else if (this.TriggerType == global::TriggerType.ModuleInstanciator)
             {
