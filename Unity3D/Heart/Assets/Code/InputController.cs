@@ -48,7 +48,12 @@ public class InputController : MonoBehaviour
                 vecJumping = new Vector3(0f, Character.JumpingHeight, 0f);
                 _wantToJump = false;
             }
-
+			
+			
+			if(percent!=0f)
+			{
+				Debug.Log("Horizontal : " + percent.ToString());
+			}
 
             Vector3 vecMoving = vecBaseSpeed + vecRunningCurve + vecJumping;
 

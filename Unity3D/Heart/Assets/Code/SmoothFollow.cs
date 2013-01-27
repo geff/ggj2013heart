@@ -5,6 +5,8 @@ public class SmoothFollow : MonoBehaviour
 {
     public Transform Character;
     public float Factor = 10;
+	public bool LookAtActivated = true;
+	
     // Use this for initialization
     void Start()
     {
@@ -17,6 +19,7 @@ public class SmoothFollow : MonoBehaviour
         Vector3 target = new Vector3(Character.position.x, transform.position.y, transform.position.z);
 
         transform.position = Vector3.Lerp(transform.position, target, Factor * Time.deltaTime);
-        transform.LookAt(Character.position);
+    	if(LookAtActivated)
+			transform.LookAt(Character.position);
     }
 }
