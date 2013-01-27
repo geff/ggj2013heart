@@ -74,4 +74,9 @@ public class InputController : MonoBehaviour
 
         _isLanding = true;
     }
+
+    internal void Death()
+    {
+        Application.LoadLevel("SceneDeath");
+    }
 }

@@ -30,6 +30,10 @@ public class Trigger : MonoBehaviour
             {
                 InputController.Instance.Landing();
             }
+            else if (this.TriggerType == global::TriggerType.Death)
+            {
+                InputController.Instance.Death();
+            }
             else if (this.TriggerType == global::TriggerType.ModuleInstanciator)
             {
                 GameObject gameLogic = GameObject.Find("GameLogic");
@@ -100,7 +104,7 @@ public class Trigger : MonoBehaviour
                     if (nextModule.ModulePrefab != null)
                     {
 
-                        Vector3 vec = new Vector3(Repository.Instance.NbModule * 38 + Repository.Instance.Vecteur.x, Repository.Instance.Vecteur.y, Repository.Instance.Vecteur.z);
+                        Vector3 vec = new Vector3(-Repository.Instance.NbModule * 38 + Repository.Instance.Vecteur.x + nextModule.ModulePrefab.position.x, Repository.Instance.Vecteur.y + nextModule.ModulePrefab.position.y, Repository.Instance.Vecteur.z + nextModule.ModulePrefab.position.z);
 
                         Repository.Instance.NbModule++;
 
@@ -130,5 +134,6 @@ public enum TriggerType
 {
     Jump,
     Landing,
-    ModuleInstanciator
+    ModuleInstanciator,
+    Death
 }

@@ -15,9 +15,9 @@ public class Repository : MonoBehaviour
     void Start()
     {
         Instance = this;
-        Vecteur = GameObject.Find("Rocher").transform.position;
+        Vecteur = GameObject.Find("Module Intro").transform.position;
 
-        Vecteur.x += 55;
+        Vecteur.x -= 25;
     }
 
     // Update is called once per frame
