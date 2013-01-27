@@ -44,6 +44,7 @@ public class InputController : MonoBehaviour
 
     public void Jump()
     {
+        Character.animation.Play("jump");
         _wantToJump = true;
     }
 }
