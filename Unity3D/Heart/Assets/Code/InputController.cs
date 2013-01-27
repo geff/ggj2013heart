@@ -6,6 +6,7 @@ public class InputController : MonoBehaviour
     public static InputController Instance;
     public Character Character;
     private bool _wantToJump;
+    private bool _isLanding;
 
     // Use this for initialization
     void Start()
@@ -19,10 +20,22 @@ public class InputController : MonoBehaviour
         if (Character != null && Character.RunningCurve != null)
         {
             float percent = 0f;
+            float percentLanding = 1f;
 
             percent = Input.GetAxis("Horizontal");
 
-            Vector3 vecBaseSpeed = new Vector3(Character.BaseSpeed * Time.deltaTime, 0f,0f);
+
+            if (!Character.animation.IsPlaying("landing"))
+            {
+                _isLanding = false;
+            } 
+            
+            if (_isLanding)
+            {
+                percentLanding = 0.02f;
+            }
+
+            Vector3 vecBaseSpeed = new Vector3(Character.BaseSpeed * Time.deltaTime * percentLanding, 0f,0f);
             Vector3 vecRunningCurve = new Vector3(Character.RunningCurve.Evaluate(percent), 0f,0f);
             Vector3 vecJumping = new Vector3(0f, 0f, 0f);
 
@@ -36,6 +49,7 @@ public class InputController : MonoBehaviour
                 _wantToJump = false;
             }
 
+
             Vector3 vecMoving = vecBaseSpeed + vecRunningCurve + vecJumping;
 
             Character.rigidbody.AddForce(vecMoving);
@@ -46,5 +60,13 @@ public class InputController : MonoBehaviour
     {
         Character.animation.Play("jump");
         _wantToJump = true;
+    }
+
+    public void Landing()
+    {
+        Character.animation.Play("landing");
+        Character.animation.Play("run", AnimationPlayMode.Queue);
+
+        _isLanding = true;
     }
 }
