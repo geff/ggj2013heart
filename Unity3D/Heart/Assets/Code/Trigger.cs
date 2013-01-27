@@ -95,7 +95,13 @@ public class Trigger : MonoBehaviour
 
                     if (nextModule.ModulePrefab != null)
                     {
-                        Instantiate(nextModule.ModulePrefab, new Vector3(), Quaternion.identity);
+
+                        Vector3 vec = new Vector3(Repository.Instance.NbModule * 36 + Repository.Instance.XOffset, 0f, 0f);
+
+                        Repository.Instance.NbModule++;
+
+
+                        Instantiate(nextModule.ModulePrefab, vec, Quaternion.identity);
                     }
                 }
             }
