@@ -1,10 +1,11 @@
 ﻿<Properties>
   <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" />
-  <MonoDevelop.Ide.Workbench ActiveDocument="Assets\Code\SmoothFollow.cs">
+  <MonoDevelop.Ide.Workbench ActiveDocument="Assets\Code\Keyboard.cs">
     <Files>
-      <File FileName="Assets\Code\InputController.cs" Line="36" Column="14" />
-      <File FileName="Assets\Code\Trigger.cs" Line="44" Column="5" />
+      <File FileName="Assets\Code\InputController.cs" Line="55" Column="7" />
+      <File FileName="Assets\Code\Trigger.cs" Line="101" Column="39" />
       <File FileName="Assets\Code\SmoothFollow.cs" Line="17" Column="18" />
+      <File FileName="Assets\Code\Keyboard.cs" Line="45" Column="4" />
     </Files>
   </MonoDevelop.Ide.Workbench>
   <MonoDevelop.Ide.DebuggingService.Breakpoints>
