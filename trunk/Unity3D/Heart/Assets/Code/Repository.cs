@@ -6,10 +6,11 @@ public class Repository : MonoBehaviour
     public static Repository Instance;
 
     public int Life = 70;
-    public Difficulty CurrentDifficulty = Difficulty.ImTooYoungToDie_1;
-    public int XOffset = 0;
     public Vector3 Vecteur;
     public int NbModule = 0;
+    public bool SkipIntro = true;
+    public float percent = 0f;
+    public Module CurrentModule;
 
     // Use this for initialization
     void Start()
@@ -17,7 +18,12 @@ public class Repository : MonoBehaviour
         Instance = this;
         Vecteur = GameObject.Find("Module Intro").transform.position;
 
-        Vecteur.x -= 25;
+        Vecteur.x -= 26;
+
+        if (SkipIntro && Camera.mainCamera.animation.isPlaying)
+        {
+            Camera.main.animation.Stop();
+        }
     }
 
     // Update is called once per frame
