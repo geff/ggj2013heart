@@ -1,6 +1,7 @@
 using UnityEngine;
 using System.Collections;
 using System;
+using System.Collections.Generic;
 
 public class InputController : MonoBehaviour
 {
@@ -10,12 +11,22 @@ public class InputController : MonoBehaviour
     private bool _isLanding;
     public bool _isRunning = false;
     public Vector3 vec;
-    private float scrollWheel = 0f;
+    public float scrollWheel = 0f;
+    public float velocity = 0f;
+    public float CurDeltaXValue;
+    public Transform SpeedBar;
+    public bool IsTouchedActive = true;
+    public Camera cameraHud;
+    private GameState gameState = GameState.IntroCamera;
 
-    // Use this for initialization
+    private Transform speedBar;
+    GameObject gameLogic;
+
     void Start()
     {
         Instance = this;
+        speedBar = GameObject.Find("SpeedBar").transform;
+        gameLogic = GameObject.Find("GameLogic");
     }
 
     // Update is called once per frame
@@ -23,58 +34,114 @@ public class InputController : MonoBehaviour
     {
         if (Character != null && Character.RunningCurve != null)
         {
-            float percent = 0f;
-            float percentLanding = 1f;
-
-            if (Input.GetJoystickNames().Length == 0)
+            if (Camera.mainCamera.animation.isPlaying)
             {
-                scrollWheel += Input.GetAxis("Mouse ScrollWheel");
-                percent += scrollWheel;
-                Debug.Log(percent);
+                return;
+            }
+            else if (!Repository.Instance.SkipIntro)
+            {
+                if (gameState == GameState.IntroCamera)
+
+                    if (!speedBar.animation.isPlaying && gameState == GameState.IntroCamera)
+                    {
+                        gameState = GameState.SpeedBarAlphaFaded;
+                        speedBar.animation.Play();
+                    }
+                    else if (!speedBar.animation.isPlaying && gameState == GameState.SpeedBarAlphaFaded)
+                    {
+                        gameState = GameState.Playing;
+                    }
+            }
+
+
+            if (SpeedBar != null && IsTouchedActive)
+            {
+                RaycastHit hit = new RaycastHit();
+
+                if (Application.platform == RuntimePlatform.Android)
+                {
+                    float val = Input.acceleration.y / 0.5f - 0.25f;
+
+                    if (val < -1f)
+                        val = -1f;
+                    else if (val > 1f)
+                        val = 1f;
+
+                    Repository.Instance.percent = -val;
+
+                    for (int i = 0; i < Input.touchCount; ++i)
+                    {
+                        Ray ray = cameraHud.ScreenPointToRay(Input.GetTouch(i).position);
+
+                        if (SpeedBar.collider.Raycast(ray, out hit, 1000f))
+                        {
+                            float min = 163.07f;
+                            float max = 163.58f;
+
+                            val = -((hit.point.x - max) / (max - min) * 2f + 1f);
+
+                            Repository.Instance.percent = val;
+                        }
+                    }
+                }
+                else
+                {
+                    Ray ray = cameraHud.ScreenPointToRay(Input.mousePosition);
+
+                    if (SpeedBar.collider.Raycast(ray, out hit, 100f))
+                    {
+                        float min = 163.07f;
+                        float max = 163.58f;
+
+                        float val = -((hit.point.x - max) / (max - min) * 2f + 1f);
+
+                        Repository.Instance.percent = val;
+                    }
+                }
             }
             else
             {
-                percent = Input.GetAxis("Horizontal");
+                if (Input.GetJoystickNames().Length == 0)
+                {
+                    scrollWheel += Input.GetAxis("Mouse ScrollWheel");
+
+                    scrollWheel = Mathf.Clamp(scrollWheel, -1f, 1f);
+
+                    Repository.Instance.percent = scrollWheel;
+                }
+                else
+                {
+                    Repository.Instance.percent = Input.GetAxis("Horizontal");
+                }
             }
 
-            percent = Mathf.Clamp(percent, -1f, 1f);
+            Repository.Instance.percent = Mathf.Clamp(Repository.Instance.percent, -1f, 1f);
 
-            if (Camera.mainCamera.animation.isPlaying)
-                return;
 
-            if (!Character.animation.IsPlaying("landing"))
+
+            if (!Character.Model.animation.IsPlaying("landing"))
             {
                 _isLanding = false;
             }
 
-            if (_isLanding)
-            {
-                percentLanding = 0.02f;
-            }
-
-            Vector3 vecBaseSpeed = new Vector3(Character.BaseSpeed * Time.deltaTime * percentLanding, 0f, 0f);
-            Vector3 vecRunningCurve = new Vector3(Character.RunningCurve.Evaluate(percent), 0f, 0f);
+            CurDeltaXValue = Character.RunningCurve.Evaluate(Repository.Instance.percent);
+            Vector3 vecBaseSpeed = new Vector3(Character.BaseSpeed * Time.deltaTime, 0f, 0f);
+            Vector3 vecRunningCurve = new Vector3(CurDeltaXValue, 0f, 0f);
             Vector3 vecJumping = new Vector3(0f, 0f, 0f);
 
             if (Input.GetButton("Jump"))
                 Jump();
 
-            if (_wantToJump)
+
+            if (_wantToJump && !Character.Model.animation.IsPlaying("jump"))
             {
-                Debug.Log("Want to jump");
                 vecJumping = new Vector3(0f, Character.JumpingHeight, 0f);
                 _wantToJump = false;
             }
 
-
-            if (percent != 0f)
+            if (Repository.Instance.percent != 0f)
             {
-                if (!_isRunning)
-                    Character.animation.Play("run");
-
                 _isRunning = true;
-
-                //Debug.Log("Horizontal : " + percent.ToString());
             }
 
             Vector3 vecMoving = Vector3.zero;
@@ -82,45 +149,47 @@ public class InputController : MonoBehaviour
             if (_isRunning)
             {
                 Vector3 vecX = vecBaseSpeed + vecRunningCurve;
-                //vecX.x = Mathf.Clamp(vec.x, -6f, 0f);
-                vec = vecX;
+                //vec = vecX;
 
                 vecMoving = vecX + vecJumping;
-
-                /*
-
-                float maxSpeed = 6;
-                float weightRun = Math.Abs(vecX.x) / maxSpeed;
-                float weightWalk = 1 - weightRun;
-
-                //animation.Blend("walk", weightWalk, 0.1f);
-                //animation.Blend("run", weightRun, 0.1f);
-
-                Character.animation.Blend("walk", weightWalk, 0.1f);
-                Character.animation.Blend("run", weightRun, 0.1f);
-
-                Character.animation["walk"].layer = 1;
-                Character.animation["run"].layer = 1;
-                Character.animation.SyncLayer(1);
-                */
-                //Character.animation.Blend(
-
             }
 
-            Character.rigidbody.AddForce(vecMoving);
+
+
+            Character.Model.rigidbody.AddForce(vecMoving);
+
+            Character.Model.rigidbody.velocity = new Vector3(Mathf.Clamp(Character.Model.rigidbody.velocity.x, -8f, 0f), Character.Model.rigidbody.velocity.y, Character.Model.rigidbody.velocity.z);
+
+            velocity = Math.Abs(Character.Model.rigidbody.velocity.x);
+
+            vec = Character.Model.rigidbody.GetPointVelocity(this.transform.position);
+
+            //Debug.Log(velocity);
+
+            //if (!Character.animation.IsPlaying("jump"))
+            {
+                if (velocity < 0.13f)
+                    Character.Model.animation.CrossFade("tuto");
+                else if (velocity < 2f)
+                    Character.Model.animation.CrossFade("walk");
+                else
+                    Character.Model.animation.CrossFade("run");
+            }
         }
     }
 
     public void Jump()
     {
-        Character.animation.Play("jump");
+        Character.Model.animation.CrossFade("jump");
+        Character.Model.animation.Play("in the air", AnimationPlayMode.Queue);
+
         _wantToJump = true;
     }
 
     public void Landing()
     {
-        Character.animation.Play("landing");
-        Character.animation.Play("run", AnimationPlayMode.Queue);
+        Character.Model.animation.CrossFade("landing");
+        Character.Model.animation.Play("run", AnimationPlayMode.Queue);
 
         _isLanding = true;
     }
@@ -129,4 +198,47 @@ public class InputController : MonoBehaviour
     {
         Application.LoadLevel("Game_over");
     }
+
+    internal void InstanciateModule()
+    {
+        //Debug.Log(Repository.Instance.CurrentModule.Nom.ToString());
+        //Debug.Log("End:" + Repository.Instance.CurrentModule.EndHeight.ToString());
+
+        List<Module> listModule = GetListFromArray<Module>(gameLogic.GetComponents<Module>());
+
+        listModule = listModule.FindAll(module => module.StartHeight == Repository.Instance.CurrentModule.EndHeight && module.Nom != "Intro"  && module.enabled);
+
+        System.Random rnd = new System.Random();
+
+        Repository.Instance.CurrentModule = listModule[rnd.Next(0, listModule.Count)];
+
+        Debug.Log(Repository.Instance.CurrentModule.Nom.ToString() + "   " + Repository.Instance.CurrentModule.StartHeight.ToString()+ " :: " +Repository.Instance.CurrentModule.EndHeight.ToString());
+
+        Vector3 vec = new Vector3(-Repository.Instance.NbModule * 31 + Repository.Instance.Vecteur.x + Repository.Instance.CurrentModule.ModulePrefab.position.x, Repository.Instance.Vecteur.y + Repository.Instance.CurrentModule.ModulePrefab.position.y, Repository.Instance.Vecteur.z + Repository.Instance.CurrentModule.ModulePrefab.position.z);
+
+        Repository.Instance.NbModule++;
+
+        Instantiate(Repository.Instance.CurrentModule.ModulePrefab, vec, Quaternion.identity);
+    }
+
+
+    public List<T> GetListFromArray<T>(T[] tab)
+    {
+        List<T> list = new List<T>();
+
+        foreach (T item in tab)
+        {
+            list.Add(item);
+        }
+
+        return list;
+    }
+}
+
+public enum GameState
+{
+    IntroCamera,
+    SpeedBarAlphaFaded,
+    Playing,
+    Dead
 }

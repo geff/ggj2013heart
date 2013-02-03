@@ -7,6 +7,8 @@ public class Module : MonoBehaviour
     public string Nom;
     public Difficulty Difficulty = Difficulty.ImTooYoungToDie_1;
     public Transform ModulePrefab;
+    public ModuleHeight StartHeight = ModuleHeight.Low;
+    public ModuleHeight EndHeight = ModuleHeight.Low;
 
     // Use this for initialization
     void Start()
@@ -28,4 +30,10 @@ public enum Difficulty : int
     HurtMePlenty_3 = 3,
     UltraViolence_4 = 4,
     Nightmare_5 = 5
+}
+
+public enum ModuleHeight
+{
+    High,
+    Low
 }
