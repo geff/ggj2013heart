@@ -12,11 +12,15 @@ public class Repository : MonoBehaviour
     public float percent = 0f;
     public Module CurrentModule;
 
+    public UnityEngine.Object[] ViewedModules;
+
     // Use this for initialization
     void Start()
     {
         Instance = this;
         Vecteur = GameObject.Find("Module Intro").transform.position;
+        ViewedModules = new UnityEngine.Object[3];
+        ViewedModules[0] = GameObject.Find("Module Intro").transform;
 
         Vecteur.x -= 26;
 
