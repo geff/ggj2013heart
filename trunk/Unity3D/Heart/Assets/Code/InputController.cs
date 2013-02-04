@@ -17,7 +17,7 @@ public class InputController : MonoBehaviour
     public Transform SpeedBar;
     public bool IsTouchedActive = true;
     public Camera cameraHud;
-    private GameState gameState = GameState.IntroCamera;
+    public GameState gameState = GameState.IntroCamera;
 
     private Transform speedBar;
     GameObject gameLogic;
@@ -38,21 +38,21 @@ public class InputController : MonoBehaviour
             {
                 return;
             }
-            else if (!Repository.Instance.SkipIntro)
+            else
             {
-                if (gameState == GameState.IntroCamera)
-
-                    if (!speedBar.animation.isPlaying && gameState == GameState.IntroCamera)
-                    {
-                        gameState = GameState.SpeedBarAlphaFaded;
-                        speedBar.animation.Play();
-                    }
-                    else if (!speedBar.animation.isPlaying && gameState == GameState.SpeedBarAlphaFaded)
-                    {
-                        gameState = GameState.Playing;
-                    }
+                if (!speedBar.animation.isPlaying && gameState == GameState.IntroCamera)
+                {
+                    gameState = GameState.SpeedBarAlphaFaded;
+                    speedBar.animation.Play();
+                }
+                else if (!speedBar.animation.isPlaying && gameState == GameState.SpeedBarAlphaFaded)
+                {
+                    gameState = GameState.Playing;
+                }
             }
 
+
+            float val = 0f;
 
             if (SpeedBar != null && IsTouchedActive)
             {
@@ -60,14 +60,7 @@ public class InputController : MonoBehaviour
 
                 if (Application.platform == RuntimePlatform.Android)
                 {
-                    float val = Input.acceleration.y / 0.5f - 0.25f;
-
-                    if (val < -1f)
-                        val = -1f;
-                    else if (val > 1f)
-                        val = 1f;
-
-                    Repository.Instance.percent = -val;
+                    val = -(Input.acceleration.y / 0.5f - 0.25f);
 
                     for (int i = 0; i < Input.touchCount; ++i)
                     {
@@ -79,8 +72,6 @@ public class InputController : MonoBehaviour
                             float max = 163.58f;
 
                             val = -((hit.point.x - max) / (max - min) * 2f + 1f);
-
-                            Repository.Instance.percent = val;
                         }
                     }
                 }
@@ -93,9 +84,7 @@ public class InputController : MonoBehaviour
                         float min = 163.07f;
                         float max = 163.58f;
 
-                        float val = -((hit.point.x - max) / (max - min) * 2f + 1f);
-
-                        Repository.Instance.percent = val;
+                        val = -((hit.point.x - max) / (max - min) * 2f + 1f);
                     }
                 }
             }
@@ -107,15 +96,15 @@ public class InputController : MonoBehaviour
 
                     scrollWheel = Mathf.Clamp(scrollWheel, -1f, 1f);
 
-                    Repository.Instance.percent = scrollWheel;
+                    val = scrollWheel;
                 }
                 else
                 {
-                    Repository.Instance.percent = Input.GetAxis("Horizontal");
+                    val = Input.GetAxis("Horizontal");
                 }
             }
 
-            Repository.Instance.percent = Mathf.Clamp(Repository.Instance.percent, -1f, 1f);
+            Repository.Instance.percent = Mathf.Clamp(val, -1f, 1f);
 
 
 
@@ -206,19 +195,25 @@ public class InputController : MonoBehaviour
 
         List<Module> listModule = GetListFromArray<Module>(gameLogic.GetComponents<Module>());
 
-        listModule = listModule.FindAll(module => module.StartHeight == Repository.Instance.CurrentModule.EndHeight && module.Nom != "Intro"  && module.enabled);
+        listModule = listModule.FindAll(module => module.StartHeight == Repository.Instance.CurrentModule.EndHeight && module.Nom != "Intro" && module.enabled);
 
         System.Random rnd = new System.Random();
 
+        if(Repository.Instance.ViewedModules[2] != null)
+            Destroy(((Transform)Repository.Instance.ViewedModules[2]).gameObject);
+
+        Repository.Instance.ViewedModules[2] = Repository.Instance.ViewedModules[1];
+        Repository.Instance.ViewedModules[1] = Repository.Instance.ViewedModules[0];
+        
         Repository.Instance.CurrentModule = listModule[rnd.Next(0, listModule.Count)];
 
-        Debug.Log(Repository.Instance.CurrentModule.Nom.ToString() + "   " + Repository.Instance.CurrentModule.StartHeight.ToString()+ " :: " +Repository.Instance.CurrentModule.EndHeight.ToString());
+        Debug.Log(Repository.Instance.CurrentModule.Nom.ToString() + "   " + Repository.Instance.CurrentModule.StartHeight.ToString() + " :: " + Repository.Instance.CurrentModule.EndHeight.ToString());
 
         Vector3 vec = new Vector3(-Repository.Instance.NbModule * 31 + Repository.Instance.Vecteur.x + Repository.Instance.CurrentModule.ModulePrefab.position.x, Repository.Instance.Vecteur.y + Repository.Instance.CurrentModule.ModulePrefab.position.y, Repository.Instance.Vecteur.z + Repository.Instance.CurrentModule.ModulePrefab.position.z);
 
         Repository.Instance.NbModule++;
 
-        Instantiate(Repository.Instance.CurrentModule.ModulePrefab, vec, Quaternion.identity);
+        Repository.Instance.ViewedModules[0] = Instantiate(Repository.Instance.CurrentModule.ModulePrefab, vec, Quaternion.identity);
     }
 
 

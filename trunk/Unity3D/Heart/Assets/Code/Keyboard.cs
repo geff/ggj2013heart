@@ -40,7 +40,7 @@ public class Keyboard : MonoBehaviour
             }
 
             if (Input.GetKeyDown(KeyCode.Escape))
-                Application.CancelQuit();
+                Application.Quit();
         }
         else if (Application.loadedLevelName == "Scene")
         {

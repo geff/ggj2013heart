@@ -3,6 +3,7 @@ using System.Collections;
 
 public class Character : MonoBehaviour
 {
+    public static Character Instance;
     public float BaseSpeed = 30;
     public AnimationCurve RunningCurve = AnimationCurve.Linear(-1f, 0f, 1f, 5f);
     public float JumpingHeight;
@@ -14,6 +15,7 @@ public class Character : MonoBehaviour
     {
         Model = this.transform.GetChild(0);
         defaultFriction = Model.collider.material.staticFriction;
+        Instance = this;
     }
 
     // Update is called once per frame
